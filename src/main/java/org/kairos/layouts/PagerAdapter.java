@@ -1,5 +1,6 @@
 package org.kairos.layouts;
 
+import java.io.File;
 import javafx.scene.layout.Pane;
 
 /**
@@ -7,8 +8,12 @@ import javafx.scene.layout.Pane;
  */
 public abstract class PagerAdapter {
 
+    public abstract File getPageFile(int position);
+
     public abstract String getPageTitle(int position);
+
     public abstract int getCount();
-    public abstract Object instantiateItem(Pane container,int position);
+
+    public abstract Object instantiateItem(Pane container, int position);
 
 }
