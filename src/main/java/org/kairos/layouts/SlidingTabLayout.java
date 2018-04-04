@@ -8,8 +8,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Skin;
@@ -27,8 +27,9 @@ import org.kairos.components.RippleSkinFactory;
  */
 public class SlidingTabLayout extends VBox {
 
-    private final int DEFAULT_HEIGHT_BAR = 3;
+    private static final int DEFAULT_HEIGHT_BAR = 3;
 
+    private final PseudoClass classSelected = PseudoClass.getPseudoClass("selected");
     private final HBox tabStrip = new HBox();
     private final VBox mainVBox = new VBox();
     public final HBox labelStrip = new HBox();
@@ -46,7 +47,6 @@ public class SlidingTabLayout extends VBox {
 
         labelStrip.prefHeightProperty().bind(prefHeightProperty().multiply(.35));
         labelStrip.setAlignment(Pos.CENTER);
-        labelStrip.getStyleClass().add("sliding-tab-layout-labelStrip");
 
         tabStrip.setAlignment(Pos.CENTER);
         tabStrip.prefWidthProperty().bind(prefWidthProperty().subtract(4));
@@ -88,9 +88,6 @@ public class SlidingTabLayout extends VBox {
                 viewPager.setCurrentItem(tabStrip.getChildren().indexOf(tabPressed));
                 toggleButtonState(tabStrip.getChildren().indexOf(tabPressed));
             });
-            if (i == 0) {
-                tab.setSelected(true);
-            }
             tab.prefWidthProperty().bind(tabStrip.prefWidthProperty());
             tabStrip.getChildren().add(tab);
 
@@ -99,7 +96,14 @@ public class SlidingTabLayout extends VBox {
             Label label = new Label();
             label.setText(adapter.getPageTitle(i));
             hbox.getChildren().add(label);
-            HBox.setHgrow(hbox, Priority.ALWAYS);
+            hbox.getStyleClass().add("sliding-tab-layout-labelStrip");
+            hbox.prefWidthProperty().bind(tab.prefWidthProperty());
+            
+            if (i == 0) {
+                hbox.pseudoClassStateChanged(classSelected, true);
+                tab.setSelected(true);
+            }
+            
             labelStrip.getChildren().add(hbox);
         }
     }
@@ -109,9 +113,12 @@ public class SlidingTabLayout extends VBox {
 
         for (int i = 0; i < adapter.getCount(); i++) {
             Tab tab = (Tab) tabStrip.getChildren().get(i);
+            HBox hbox = (HBox) labelStrip.getChildren().get(i);
             if (i == position) {
+                hbox.pseudoClassStateChanged(classSelected, true);
                 tab.setSelected(true);
             } else {
+                hbox.pseudoClassStateChanged(classSelected, false);
                 tab.setSelected(false);
             }
         }
